@@ -8,6 +8,8 @@ import { serverUrl } from '../App.jsx';
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
 import ForgotPassword from './ForgotPassword.jsx';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice.js';
 
 const SignIn = () => {
 
@@ -20,6 +22,7 @@ const SignIn = () => {
   const [err, setErr] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -29,8 +32,9 @@ const SignIn = () => {
     setLoading(true);
     setErr("");
     try{
-      const result = await axios.post(`${serverUrl}/api/auth/signin`, {userName, password});
+      const result = await axios.post(`${serverUrl}/api/auth/signin`, {userName, password}, {withCredentials:true});
       console.log(result.data);
+      dispatch(setUserData(result.data));
       setLoading(false);
     }
     catch(err){

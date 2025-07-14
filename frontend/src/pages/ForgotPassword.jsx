@@ -4,7 +4,6 @@ import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import { serverUrl } from '../App.jsx';
 import { useNavigate } from 'react-router-dom';
-import { set } from 'mongoose';
 
 const ForgotPassword = () => {
 

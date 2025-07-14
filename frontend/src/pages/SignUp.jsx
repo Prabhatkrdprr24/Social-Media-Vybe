@@ -7,6 +7,8 @@ import axios from 'axios';
 import { serverUrl } from '../App.jsx';
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice.js';
 
 
 const SignUp = () => {
@@ -28,6 +30,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const dispatch = useDispatch();
+
   const handleSignUp = async () => {
 
     setLoading(true);
@@ -35,6 +39,7 @@ const SignUp = () => {
     try{
       const result = await axios.post(`${serverUrl}/api/auth/signup`, {name, userName, email, password});
       console.log(result.data);
+      dispatch(setUserData(result.data));
       setLoading(false);
     }
     catch(err){
