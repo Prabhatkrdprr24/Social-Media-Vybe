@@ -4,6 +4,8 @@ import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
 import { Routes } from 'react-router-dom'
 
+export const serverUrl = "http://localhost:8000";
+
 const App = () => {
   return (
 
