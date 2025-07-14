@@ -2,6 +2,7 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import genToken from '../config/token.js';
+import sendMail from '../config/Mail.js';
 
 export const signUp = async (req, res) => {
 
@@ -91,6 +92,84 @@ export const signOut = async (req, res) => {
     }
     catch(error){
         return res.status(500).json({ message: `signout error ${error}` });
+    }
+
+}
+
+
+export const sendOtp = async (req, res) => {
+
+    try{
+
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if(!user){
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        user.resetOtp = otp;
+        user.otpExpires = Date.now() + 10 * 60 * 1000;
+        user.isOtpVerified = false;
+
+        await user.save();
+        await sendMail(email, otp);
+
+        return res.status(200).json({ message: "Otp sent to your email" });
+    }
+    catch(error){
+        return res.status(500).json({ message: `send Otp error ${error}` });
+    }
+
+}
+
+export const verifyOtp = async (req, res) => {
+
+    try{
+
+        const { email, otp } = req.body;
+        const user = await User.findOne({ email });
+        if(!user || user.resetOtp !== otp || user.otpExpires < Date.now()){
+            return res.status(400).json({ message: "Invalid Credential/expired otp" });
+        }
+
+        user.isOtpVerified = true;
+        user.resetOtp = undefined;
+        user.otpExpires = undefined;
+
+        await user.save();
+
+        return res.status(200).json({ message: "Otp verified successfully" });
+
+    }
+    catch(error){
+        return res.status(500).json({ message: `verify Otp error ${error}` });
+    }
+
+}
+
+export const resetPassword = async (req, res) => {
+
+    try{
+
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if(!user || !user.isOtpVerified){
+            return res.status(400).json({ message: "User not found or OTP verification required" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user.password = hashedPassword;
+        
+        await user.save();
+
+        return res.status(200).json({ message: "Password reset successfully" });
+
+    }
+    catch(error){
+        return res.status(500).json({ message: `reset password error ${error}` });
     }
 
 }

@@ -8,6 +8,7 @@ import { serverUrl } from '../App.jsx';
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
 
+
 const SignUp = () => {
 
   const [inputClicked, setInputClicked] = useState({
@@ -18,6 +19,7 @@ const SignUp = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
   const navigate = useNavigate();
 
@@ -29,6 +31,7 @@ const SignUp = () => {
   const handleSignUp = async () => {
 
     setLoading(true);
+    setErr("");
     try{
       const result = await axios.post(`${serverUrl}/api/auth/signup`, {name, userName, email, password});
       console.log(result.data);
@@ -37,6 +40,7 @@ const SignUp = () => {
     catch(err){
       console.error("Error during sign up:", err);
       setLoading(false);
+      setErr(err.response.data.message);
     }
 
   }
@@ -78,6 +82,8 @@ const SignUp = () => {
             {!showPassword ? <IoMdEye className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(true)}/> : <IoMdEyeOff className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(false)}/>}
 
           </div>
+
+          {err && <p className='text-red-500 text-[14px]'>{err}</p>}
 
           <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={handleSignUp} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "SignUp"}</button>
           <p className='cursor-pointer text-gray-800' onClick={() => navigate('/signin')}>already have an account ? <span className='border-b-2 border-b-black pb-[3px] text-black'>Sign In</span></p>

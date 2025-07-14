@@ -1,10 +1,14 @@
 import React, { use } from 'react'
 import { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
+import axios from 'axios';
+import { serverUrl } from '../App.jsx';
+import { useNavigate } from 'react-router-dom';
+import { set } from 'mongoose';
 
 const ForgotPassword = () => {
 
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(1);
     const [inputClicked, setInputClicked] = useState({
         email: false,
         otp: false,
@@ -18,9 +22,71 @@ const ForgotPassword = () => {
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState("");
 
     const sendOtp = async () => {
         setLoading(true);
+    }
+
+    const handleStep1 = async () => {
+        setLoading(true);
+        setErr("");
+        try{
+
+            const result = await axios.post(`${serverUrl}/api/auth/sendOtp`, { email }, {withCredentials: true});
+            console.log(result.data);
+            setLoading(false);
+            setStep(2); // Move to the next step after sending OTP
+
+        }
+        catch(err){
+            console.error("Error during step 1:", err);
+            setLoading(false);
+            setErr(err.response.data.message);
+        }
+
+    }
+
+    const handleStep2 = async () => {
+        setLoading(true);
+        setErr("");
+        try{
+
+            const result = await axios.post(`${serverUrl}/api/auth/verifyOtp`, { email, otp }, {withCredentials: true});
+            console.log(result.data);
+            setLoading(false);
+            setStep(3); // Move to the next step after verifying OTP
+
+        }
+        catch(err){
+            console.error("Error during step 2:", err);
+            setLoading(false);
+            setErr(err.response.data.message);
+        }
+
+    }
+
+    const handleStep3 = async () => {
+        setLoading(true);
+        setErr("");
+        try{
+
+            if(newPassword !== confirmNewPassword){
+                setLoading(false);
+                return setErr("Passwords do not match");
+            }
+
+            const result = await axios.post(`${serverUrl}/api/auth/resetPassword`, { email, password: newPassword }, {withCredentials: true});
+            console.log(result.data);
+            setLoading(false);
+
+        }
+        catch(err){
+            console.error("Error during step 3:", err);
+            setLoading(false);
+            setErr(err.response.data.message);
+        }
+
     }
 
     return (
@@ -36,7 +102,9 @@ const ForgotPassword = () => {
                     
                 </div>
 
-                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={sendOtp} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Send OTP"}</button>
+                {err && <p className='text-red-500 text-[14px]'>{err}</p>}
+
+                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' disabled={loading} onClick={handleStep1}>{loading ? <ClipLoader size={30} color='white' /> : "Send OTP"}</button>
 
             </div>}
 
@@ -51,7 +119,9 @@ const ForgotPassword = () => {
                     
                 </div>
 
-                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={sendOtp} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Submit"}</button>
+                {err && <p className='text-red-500 text-[14px]'>{err}</p>}
+
+                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={handleStep2} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Submit"}</button>
 
             </div>}
 
@@ -72,7 +142,9 @@ const ForgotPassword = () => {
                     
                 </div>
 
-                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={sendOtp} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Reset Password"}</button>
+                {err && <p className='text-red-500 text-[14px]'>{err}</p>}
+
+                <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={handleStep3} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Reset Password"}</button>
 
             </div>
             

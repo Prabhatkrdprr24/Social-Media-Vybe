@@ -17,6 +17,7 @@ const SignIn = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ const SignIn = () => {
   const handleSignIn = async () => {
 
     setLoading(true);
+    setErr("");
     try{
       const result = await axios.post(`${serverUrl}/api/auth/signin`, {userName, password});
       console.log(result.data);
@@ -34,6 +36,7 @@ const SignIn = () => {
     catch(err){
       console.error("Error during sign up:", err);
       setLoading(false);
+      setErr(err.response.data.message);
     }
 
   }
@@ -63,6 +66,8 @@ const SignIn = () => {
             {!showPassword ? <IoMdEye className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(true)}/> : <IoMdEyeOff className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(false)}/>}
 
           </div>
+
+          {err && <p className='text-red-500 text-[14px]'>{err}</p>}
 
           <div className='w-[90%] px-[20px] cursor-pointer' onClick={() => navigate('/forgot-password')}>Forgot Password</div>
 
