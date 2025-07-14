@@ -7,6 +7,7 @@ import axios from 'axios';
 import { serverUrl } from '../App.jsx';
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from 'react-router-dom';
+import ForgotPassword from './ForgotPassword.jsx';
 
 const SignIn = () => {
 
@@ -62,6 +63,8 @@ const SignIn = () => {
             {!showPassword ? <IoMdEye className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(true)}/> : <IoMdEyeOff className='absolute cursor-pointer right-[20px] w-[25px] h-[25px]' onClick={() => setShowPassword(false)}/>}
 
           </div>
+
+          <div className='w-[90%] px-[20px] cursor-pointer' onClick={() => navigate('/forgot-password')}>Forgot Password</div>
 
           <button className='w-[70%] px-[20px] py-[10px] bg-black text-white font-semibold h-[50px] cursor-pointer rounded-2xl mt-[30px]' onClick={handleSignIn} disabled={loading}>{loading ? <ClipLoader size={30} color='white' /> : "Sign In"}</button>
           <p className='cursor-pointer text-gray-800' onClick={() => navigate('/signup')}>Want to Create a New Account ? <span className='border-b-2 border-b-black pb-[3px] text-black'>Sign Up</span></p>
