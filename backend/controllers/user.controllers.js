@@ -54,11 +54,11 @@ export const editProfile = async (req, res) => {
 
         const sameUserWithUserName = await User.findOne({ userName }).select("-password");
 
-        if(sameUserWithUserName && sameUserWithUserName._id !== user._id){
-            return res.status(400).json({ message: "Username already exists" });
+        if(sameUserWithUserName && sameUserWithUserName._id!=req.userId){
+            return res.status(400).json({message:"userName already exist"})
         }
 
-        let profileImage;
+        let profileImage = user.profileImage;
         if(req.file){
             profileImage = await uploadOnCloudinary(req.file.path);
         }

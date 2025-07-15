@@ -22,7 +22,7 @@ const Nav = () => {
             <div className='text-white w-[25px] h-[25px]'><FiPlusSquare /></div>
             <div className='text-white w-[25px] h-[25px]'><RxVideo /></div>
             <div className='w-[40px] h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden' onClick={() => navigate(`/profile/${userData.userName}`)}>
-                <img src={dp} alt='' className='w-full object-cover' />
+                <img src={ userData.profileImage || dp} alt='' className='w-full object-cover' />
             </div>
 
         </div>
