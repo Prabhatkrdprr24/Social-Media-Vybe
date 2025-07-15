@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import Home from './pages/Home.jsx'
 import { Navigate } from 'react-router-dom'
 import getSuggestedUsers from './hooks/getSuggestedUsers.jsx'
+import Profile from './pages/Profile.jsx'
 
 export const serverUrl = "http://localhost:8000";
 
@@ -26,6 +27,7 @@ const App = () => {
       <Route path="/signin" element={ !userData ? <SignIn /> : <Navigate to={"/"} />} />
       <Route path="/" element={ userData ? <Home /> : <Navigate to={"/signin"} />} />
       <Route path="/forgot-password" element={ !userData ? <ForgotPassword /> : <Navigate to={"/"} />} />
+      <Route path="/profile/:userName" element={ userData ? <Profile /> : <Navigate to={"/signin"} />} />
     </Routes>
 
   )
