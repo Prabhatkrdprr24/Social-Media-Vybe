@@ -6,7 +6,7 @@ export const getCurrentUser = async (req, res) => {
     try{
 
         const userId = req.userId;
-        const user = await User.findById(userId).populate("posts loops");
+        const user = await User.findById(userId).populate("posts loops").populate("posts loops posts.author posts.comments saved saved.author");
         if(!user){
             return res.status(404).json({ message: "User not found" });
         }

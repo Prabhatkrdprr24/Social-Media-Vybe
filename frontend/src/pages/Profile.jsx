@@ -11,13 +11,17 @@ import dp from "../assets/dp.webp";
 import { useNavigate } from "react-router-dom";
 import Nav from "../components/Nav.jsx";
 import FollowButton from "../components/FollowButton.jsx";
+import Post from "../components/Post.jsx";
+import { useState } from "react";
 
 const Profile = () => {
   const { userName } = useParams();
   const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [postType, setPostType] = useState("posts");
 
   const { profileData, userData } = useSelector((state) => state.user);
+  const { postData } = useSelector((state) => state.post);
   console.log("Profile Data: ", profileData);
 
   const handleProfile = async () => {
@@ -99,6 +103,7 @@ const Profile = () => {
             <div className="flex relative">
               {profileData?.followers?.slice(0, 3).map((user, index) => (
                 <div
+                  key={index}
                   className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${
                     index > 0 ? `absolute left-[${index * 9}px]` : ""
                   }`}
@@ -125,6 +130,7 @@ const Profile = () => {
             <div className="flex relative">
               {profileData?.following?.slice(0, 3).map((user, index) => (
                 <div
+                  key={index}
                   className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${
                     index > 0 ? `absolute left-[${index * 10}px]` : ""
                   }`}
@@ -159,7 +165,13 @@ const Profile = () => {
 
         {profileData?._id != userData._id && (
           <>
-            <FollowButton tailwind={"px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl"} targetUserId={profileData?._id} />
+            <FollowButton
+              tailwind={
+                "px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl"
+              }
+              targetUserId={profileData?._id}
+              onFollowChange={handleProfile}
+            />
             <button className="px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl">
               Message
             </button>
@@ -168,11 +180,65 @@ const Profile = () => {
       </div>
 
       <div className="w-full min-h-[100vh] flex justify-center">
-        <div className="w-full max-w-[900px] flex flex-col items-center rounded-t-[30px] bg-white relative gap-[20px] pt-[30px]">
-            <Nav />
+        <div className="w-full max-w-[900px] flex flex-col items-center rounded-t-[30px] bg-white relative gap-[20px] pt-[30px] pb-[100px]">
+          {profileData?._id == userData._id && (
+            <div className="w-[90%] max-w-[500px] h-[80px] bg-[white] rounded-full flex justify-center items-center gap-[10px]">
+              <div
+                className={`${
+                  postType == "posts"
+                    ? "bg-black text-white shadow-2xl shadow-black"
+                    : ""
+                }  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black`}
+                onClick={() => setPostType("posts")}
+              >
+                Posts
+              </div>
+
+              {}
+              <div
+                className={`${
+                  postType == "saved"
+                    ? "bg-black text-white shadow-2xl shadow-black"
+                    : ""
+                }  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black`}
+                onClick={() => setPostType("saved")}
+              >
+                Saved
+              </div>
+            </div>
+          )}
+
+          <Nav />
+
+          {profileData?._id == userData._id && (
+            <>
+              {postType == "posts" &&
+                postData?.map(
+                  (post, index) =>
+                    post.author?._id == profileData?._id && (
+                      <Post key={index} post={post} />
+                    )
+                )}
+
+              {postType == "saved" &&
+                postData?.map(
+                  (post, index) =>
+                    userData.saved.includes(post._id) && (
+                      <Post key={index} post={post} />
+                    )
+                )}
+            </>
+          )}
+
+          {profileData?._id != userData._id &&
+            postData.map(
+              (post, index) =>
+                post.author?._id == profileData?._id && (
+                  <Post key={index} post={post} />
+                )
+            )}
         </div>
       </div>
-
     </div>
   );
 };

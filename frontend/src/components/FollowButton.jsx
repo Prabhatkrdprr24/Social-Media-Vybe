@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFollow } from '../redux/userSlice.js';
 import { useNavigate } from 'react-router-dom';
 
-const FollowButton = ({targetUserId, tailwind}) => {
+const FollowButton = ({targetUserId, tailwind, onFollowChange}) => {
 
     const dispatch = useDispatch();
 
@@ -18,6 +18,9 @@ const FollowButton = ({targetUserId, tailwind}) => {
 
             const result = await axios.get(`${serverUrl}/api/user/follow/${targetUserId}`, { withCredentials: true });
             dispatch(toggleFollow(targetUserId));
+            if(onFollowChange) {
+                onFollowChange();
+            }
         }
         catch (error) {
             console.log("Error in handleFollow: ", error);
