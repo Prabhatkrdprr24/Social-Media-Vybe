@@ -16,7 +16,7 @@ export const uploadLoop = async (req, res) => {
             return res.status(400).json({ message: "media is required" });
         }
 
-        const loop = new Loop.create({
+        const loop = await Loop.create({
             caption,
             media,
             author: req.userId

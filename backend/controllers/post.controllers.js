@@ -16,7 +16,7 @@ export const uploadPost = async (req, res) => {
             return res.status(400).json({ message: "media is required" });
         }
 
-        const post = new Post.create({
+        const post = await Post.create({
             caption,
             media,
             mediaType,
@@ -43,7 +43,10 @@ export const getAllPosts = async (req, res) => {
 
     try{
 
-        const posts = await Post.find({}).populate("author", "name userName profileImage");
+        const posts = await Post.find({})
+            .populate("author", "name userName profileImage")
+            .populate("comments.author", "name userName profileImage")
+            .sort({ createdAt: -1 });
         return res.status(200).json(posts);
     }
     catch(error){
@@ -71,7 +74,7 @@ export const like = async (req, res) => {
         }
 
         await post.save();
-        post.populate("author", "name userName profileImage");
+        await post.populate("author", "name userName profileImage");
 
         return res.status(200).json(post);
 
@@ -86,7 +89,7 @@ export const comment = async (req, res) => {
 
     try{
 
-        const message = req.body;
+        const {message} = req.body;
         const postId = req.params.postId;
         const post = await Post.findById(postId);
         if(!post){
@@ -100,8 +103,8 @@ export const comment = async (req, res) => {
 
         await post.save();
 
-        post.populate("author", "name userName profileImage");
-        post.populate("comments.author");
+        await post.populate("author", "name userName profileImage");
+        await post.populate("comments.author");
 
         return res.status(200).json(post);
 
@@ -119,7 +122,7 @@ export const saved = async (req, res) => {
         const postId = req.params.postId;
         const user = await User.findById(req.userId);
 
-        const alreadySaved = user.saved.some(id => id.toString() == req.userId);
+        const alreadySaved = user.saved.some(id => id.toString() == postId.toString());
         if(alreadySaved){
             user.saved = user.saved.filter(id => id.toString() != postId.toString());
         }

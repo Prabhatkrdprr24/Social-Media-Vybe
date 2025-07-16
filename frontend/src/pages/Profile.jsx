@@ -10,6 +10,7 @@ import { setUserData } from "../redux/userSlice.js";
 import dp from "../assets/dp.webp";
 import { useNavigate } from "react-router-dom";
 import Nav from "../components/Nav.jsx";
+import FollowButton from "../components/FollowButton.jsx";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -158,9 +159,7 @@ const Profile = () => {
 
         {profileData?._id != userData._id && (
           <>
-            <button className="px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl">
-              Follow
-            </button>
+            <FollowButton tailwind={"px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl"} targetUserId={profileData?._id} />
             <button className="px-[10px] min-w-[150px] py-[5px] h-[40px] bg-[white] cursor-pointer rounded-2xl">
               Message
             </button>

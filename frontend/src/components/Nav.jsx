@@ -17,10 +17,10 @@ const Nav = () => {
     return (
         <div className='w-[90%] lg:w-[40%] h-[80px] bg-black flex justify-around items-center fixed bottom-[20px] rounded-full shadow-[#000000] z-[100]'>
 
-            <div className='text-white w-[25px] h-[25px]' onClick={() => navigate('/')}><GoHomeFill /></div>
-            <div className='text-white w-[25px] h-[25px]'><FaSearch /></div>
-            <div className='text-white w-[25px] h-[25px]'><FiPlusSquare /></div>
-            <div className='text-white w-[25px] h-[25px]'><RxVideo /></div>
+            <div className='text-white w-[25px] h-[25px] cursor-pointer' onClick={() => navigate('/')}><GoHomeFill /></div>
+            <div className='text-white w-[25px] h-[25px] cursor-pointer'><FaSearch /></div>
+            <div onClick={() => navigate("/upload")} ><FiPlusSquare className='text-white w-[25px] h-[25px] cursor-pointer' /></div>
+            <div className='text-white w-[25px] h-[25px] cursor-pointer'><RxVideo /></div>
             <div className='w-[40px] h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden' onClick={() => navigate(`/profile/${userData.userName}`)}>
                 <img src={ userData.profileImage || dp} alt='' className='w-full object-cover' />
             </div>

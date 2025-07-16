@@ -11,6 +11,8 @@ import { Navigate } from 'react-router-dom'
 import getSuggestedUsers from './hooks/getSuggestedUsers.jsx'
 import Profile from './pages/Profile.jsx'
 import EditProfile from './pages/EditProfile.jsx'
+import Upload from './pages/Upload.jsx'
+import getAllPost from './hooks/getAllPost.jsx'
 
 export const serverUrl = "http://localhost:8000";
 
@@ -18,6 +20,7 @@ const App = () => {
 
   getCurrentUser();
   getSuggestedUsers();
+  getAllPost();
 
   const { userData} = useSelector((state) => state.user);
 
@@ -30,6 +33,7 @@ const App = () => {
       <Route path="/forgot-password" element={ !userData ? <ForgotPassword /> : <Navigate to={"/"} />} />
       <Route path="/profile/:userName" element={ userData ? <Profile /> : <Navigate to={"/signin"} />} />
       <Route path="/editprofile" element={ userData ? <EditProfile /> : <Navigate to={"/signin"} />} /> 
+      <Route path="/upload" element={ userData ? <Upload /> : <Navigate to={"/signin"} />} /> 
     </Routes>
 
   )
