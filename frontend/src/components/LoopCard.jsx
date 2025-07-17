@@ -14,13 +14,18 @@ import { useDispatch } from "react-redux";
 import { setLoopData } from "../redux/loopSlice";
 import axios from "axios";
 import { serverUrl } from "../App.jsx";
+import { IoSendSharp } from "react-icons/io5";
 
 const LoopCard = ({ loop }) => {
   const videoRef = useRef();
+  const commentRef = useRef();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMute, setIsMute] = useState(true);
   const [progress, setProgress] = useState(0);
   const [showHeart, setShowHeart] = useState(false);
+  const [showComment, setShowComment] = useState(false);
+  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -74,6 +79,38 @@ const LoopCard = ({ loop }) => {
     }
   };
 
+  const handleComment = async () => {
+
+    try{
+
+      const result = await axios.post(`${serverUrl}/api/loop/comment/${loop._id}`, {message}, {withCredentials: true}); 
+      const updatedLoop = result.data;
+
+      const updatedLoops = loopData.map((p) => p._id == loop._id ? updatedLoop : p);
+      dispatch(setLoopData(updatedLoops));
+      setMessage("");
+    }
+    catch (error) {
+      console.error("Error in handleComment frontend", error);
+    }
+
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if(commentRef.current && !commentRef.current.contains(event.target)) {
+        setShowComment(false);
+      }
+    }
+
+    if(showComment) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    else{
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showComment]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -107,6 +144,67 @@ const LoopCard = ({ loop }) => {
           <GoHeartFill className="w-[100px] h-[100px] text-white drop-shadow-2xl" />
         </div>
       )}
+
+      <div
+        ref={commentRef}
+        className={`absolute z-[200] bottom-0 w-full h-[500px] p-[10px]  rounded-t-4xl bg-[#0e1718] transform transition-transform duration-500 ease-in-out left-0 shadow-2xl shadow-black ${
+          showComment ? "translate-y-0" : "translate-y-[100%] "
+        }`}
+      >
+        <h1 className="text-white text-[20px] text-center font-semibold">
+          Comments
+        </h1>
+
+        <div className="w-full h-[350px] overflow-y-auto flex flex-col gap-[20px]">
+          {loop.comments.length == 0 && (
+            <div className="text-center text-white text-[20px] font-semibold mt-[50px]">
+              No Comments Yet
+            </div>
+          )}
+
+          {loop.comments?.map((com, index) => (
+            <div className="w-full  flex flex-col gap-[5px] border-b-[1px] border-gray-800 justify-center pb-[10px] mt-[10px]" key={index}>
+              <div className="flex justify-start items-center md:gap-[20px] gap-[10px]">
+                <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden">
+                  <img
+                    src={com.author?.profileImage || dp}
+                    alt=""
+                    className="w-full object-cover"
+                  />
+                </div>
+                <div className="w-[150px] font-semibold text-white truncate">
+                  {com.author?.userName}
+                </div>
+              </div>
+              <div className="text-white pl-[60px]">{com.message}</div>
+            </div>
+          ))}
+        </div>
+        <div className="w-full fixed bottom-0 h-[80px] flex items-center justify-between px-[20px] py-[20px] ">
+          <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden ">
+            <img
+              src={loop.author?.profileImage || dp}
+              alt=""
+              className="w-full object-cover "
+            />
+          </div>
+          <input
+            type="text"
+            className="px-[10px] border-b-2 border-b-gray-500 w-[90%] text-white placeholder:text-white outline-none h-[40px]"
+            placeholder="Write comment..."
+            onChange={(e) => setMessage(e.target.value)}
+            value={message}
+          />
+          {message && (
+            <button
+              className="absolute right-[20px] cursor-pointer"
+              onClick={handleComment}
+            >
+              <IoSendSharp className="w-[25px] h-[25px] text-white" />
+            </button>
+          )}
+        </div>
+      </div>
 
       <video
         ref={videoRef}
@@ -177,7 +275,7 @@ const LoopCard = ({ loop }) => {
             <div>{loop.likes.length}</div>
           </div>
 
-          <div className="flex flex-col items-center cursor-pointer">
+          <div className="flex flex-col items-center cursor-pointer" onClick={() => setShowComment(!showComment)}>
             <div>
               <MdOutlineComment className="w-[25px] cursor-pointer h-[25px]" />
             </div>

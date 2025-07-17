@@ -72,8 +72,8 @@ export const comment = async (req, res) => {
 
     try{
 
-        const message = req.body;
-        const loopId = req.params.postId;
+        const {message} = req.body;
+        const loopId = req.params.loopId;
         const loop = await Loop.findById(loopId);
         if(!loop){
             return res.status(404).json({ message: "loop not found" });
