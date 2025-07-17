@@ -173,6 +173,7 @@ const Upload = () => {
           onClick={() => mediaInput.current.click()}
         >
           <input
+            accept={uploadType == "loop" ? "video/*" : ""}
             type="file"
             className="hidden"
             ref={mediaInput}

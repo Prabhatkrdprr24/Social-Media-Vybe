@@ -48,16 +48,16 @@ export const like = async (req, res) => {
             return res.status(404).json({ message: "loop not found" });
         }
 
-        const alreadyLiked = loop.likes.some(id => id.toString() == req.userId);
+        const alreadyLiked = loop.likes.some(id => id.toString() == req.userId.toString());
         if(alreadyLiked){
-            loop.likes = post.likes.filter(id => id.toString() != req.userId.toString());
+            loop.likes = loop.likes.filter(id => id.toString() != req.userId.toString());
         }
         else{
             loop.likes.push(req.userId);
         }
 
         await loop.save();
-        loop.populate("author", "name userName profileImage");
+        await loop.populate("author", "name userName profileImage");
 
         return res.status(200).json(loop);
 
@@ -86,8 +86,8 @@ export const comment = async (req, res) => {
 
         await loop.save();
 
-        loop.populate("author", "name userName profileImage");
-        Loop.populate("comments.author");
+        await loop.populate("author", "name userName profileImage");
+        await loop.populate("comments.author");
 
         return res.status(200).json(loop);
 
