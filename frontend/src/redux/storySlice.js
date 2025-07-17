@@ -7,7 +7,7 @@ const storySlice = createSlice({
     },
     reducers: {
         setStoryData: (state, action) => {
-            state.postData = action.payload;
+            state.storyData = action.payload;
         },
     }
 

@@ -88,6 +88,7 @@ export const comment = async (req, res) => {
 
         await loop.populate("author", "name userName profileImage");
         await loop.populate("comments.author");
+        // console.log(loop);
 
         return res.status(200).json(loop);
 

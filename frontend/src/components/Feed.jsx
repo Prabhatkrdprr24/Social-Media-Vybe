@@ -10,6 +10,8 @@ import Post from './Post';
 const Feed = () => {
 
     const { postData } = useSelector((state) => state.post);
+    const { userData } = useSelector((state) => state.user);
+    // console.log(userData);
 
     return (
 
@@ -23,18 +25,7 @@ const Feed = () => {
             </div>
 
             <div className='flex w-full overflow-auto gap-[20px] items-center p-[20px]'>
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pkfgdsfgdfgdfgdfgdfgdfg"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
-                <StoryDp userName={"pk"} />
+                <StoryDp userName={"Your Story"} ProfileImage={userData.profileImage} story={userData.story}/>
             </div>
 
             <div className='w-full min-h-[100vh] flex flex-col items-center gap-[20px] p-[10px] pt-[40px] bg-white rounded-t-[60px] relative pb-[120px]'>

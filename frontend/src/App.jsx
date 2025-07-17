@@ -15,6 +15,7 @@ import Upload from './pages/Upload.jsx'
 import getAllPost from './hooks/getAllPost.jsx'
 import Loops from './pages/Loops.jsx'
 import getAllLoops from './hooks/getAllLoops.jsx'
+import Story from './pages/Story.jsx'
 
 export const serverUrl = "http://localhost:8000";
 
@@ -38,6 +39,7 @@ const App = () => {
       <Route path="/editprofile" element={ userData ? <EditProfile /> : <Navigate to={"/signin"} />} /> 
       <Route path="/upload" element={ userData ? <Upload /> : <Navigate to={"/signin"} />} /> 
       <Route path='/loops' element={ userData ? <Loops /> : <Navigate to={"/signin"} />} />
+      <Route path='/story/:userName' element={ userData ? <Story /> : <Navigate to={"/signin"} />} />
     </Routes>
 
   )

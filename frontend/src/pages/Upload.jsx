@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { setPostData } from "../redux/postSlice.js";
 import { setLoopData } from "../redux/loopSlice.js";
 import { setStoryData } from "../redux/storySlice.js";
+import { setUserData } from "../redux/userSlice.js";
 
 import storySlice from "../redux/storySlice.js";
 import postSlice from "../redux/postSlice.js";
@@ -81,7 +82,7 @@ const Upload = () => {
 
       const result = await axios.post(`${serverUrl}/api/story/upload`, formData, { withCredentials: true });
       console.log("story uploaded successfully:", result.data);
-      dispatch(setStoryData([...storyData, result.data]));
+      setUserData((prev) => ({...prev, story: result.data}));
       setLoading(false);
       navigate("/");
     } catch (error) {

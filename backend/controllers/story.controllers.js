@@ -75,7 +75,6 @@ export const viewStory = async (req, res) => {
 export const getStoryByUserName = async (req, res) => {
 
     try{
-
         const userName = req.params.userName;
         const user = await User.findOne({ userName });
         if(!user){
@@ -84,9 +83,9 @@ export const getStoryByUserName = async (req, res) => {
 
         const story = await Story.findOne({ author: user._id })
             .populate("viewers author");
+        console.log("story in backend", story);
 
         return res.status(200).json(story);
-
     }
     catch(error){
         return res.status(500).json({ message: `getStoryByUserName error ${error}` });

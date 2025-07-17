@@ -4,10 +4,12 @@ import { serverUrl } from '../App.jsx';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice.js';
 import { setFollowing } from '../redux/userSlice.js';
+import { useSelector } from 'react-redux';
 
 const getCurrentUser = () => {
 
     const dispatch = useDispatch();
+    const { storyData } = useSelector((state) => state.story);
  
     useEffect(() => {
 
@@ -23,7 +25,7 @@ const getCurrentUser = () => {
             
         }
         fetchUser();
-    }, []);
+    }, [storyData]);
 
 }
 
