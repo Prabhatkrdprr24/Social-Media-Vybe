@@ -34,7 +34,7 @@ const Story = () => {
 
     return (
         <div className='w-full h-[100vh] bg-black flex justify-center items-center'>
-            <StoryCard/>
+            <StoryCard storyData={storyData} />
         </div>
     )
 }

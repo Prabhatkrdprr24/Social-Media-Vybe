@@ -7,13 +7,14 @@ import { FaEye } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import VideoPlayer from "./VideoPlayer";
 
-const StoryCard = () => {
+const StoryCard = ({ storyData }) => {
+
   const navigate = useNavigate();
-  const { storyData } = useSelector((state) => state.story);
   const { userData } = useSelector((state) => state.user);
   const [showViewers, setShowViewers] = useState(false);
 
   const [progress, setProgress] = useState(0);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {

@@ -5,30 +5,29 @@ import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice.js';
 import { setFollowing } from '../redux/userSlice.js';
 import { useSelector } from 'react-redux';
-import { setCurrentUserStory } from '../redux/storySlice.js';
+import { setStoryList } from '../redux/storySlice.js';
 
-const getCurrentUser = () => {
+const getAllStories = () => {
 
     const dispatch = useDispatch();
+    const { userData } = useSelector((state) => state.user);
     const { storyData } = useSelector((state) => state.story);
  
     useEffect(() => {
 
-        const fetchUser = async () => {
+        const fetchStories = async () => {
             try{
-                const result = await axios.get(`${serverUrl}/api/user/current`, { withCredentials: true });
-                dispatch(setUserData(result.data));
-                dispatch(setFollowing(result.data.following || [])); // Set following data if available
-                dispatch(setCurrentUserStory(result.data.story));
+                const result = await axios.get(`${serverUrl}/api/story/getAll`, { withCredentials: true });
+                dispatch(setStoryList(result.data)); 
             }
             catch (error) {
                 console.log(error);
             }
             
         }
-        fetchUser();
-    }, [storyData]);
+        fetchStories();
+    }, [userData, storyData]);
 
 }
 
-export default getCurrentUser
+export default getAllStories;

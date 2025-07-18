@@ -16,6 +16,7 @@ import getAllPost from './hooks/getAllPost.jsx'
 import Loops from './pages/Loops.jsx'
 import getAllLoops from './hooks/getAllLoops.jsx'
 import Story from './pages/Story.jsx'
+import getAllStories from './hooks/getAllStories.jsx'
 
 export const serverUrl = "http://localhost:8000";
 
@@ -25,6 +26,7 @@ const App = () => {
   getSuggestedUsers();
   getAllPost();
   getAllLoops();
+  getAllStories();
 
   const { userData} = useSelector((state) => state.user);
 
