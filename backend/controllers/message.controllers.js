@@ -7,7 +7,7 @@ export const sendMessage = async (req, res) => {
 
     try{
         const senderId = req.userId;
-        const receiverId = req.param.receiverId;
+        const receiverId = req.params.receiverId;
         const { message } = req.body;
 
         let image;

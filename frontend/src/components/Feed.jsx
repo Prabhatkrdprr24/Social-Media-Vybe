@@ -6,8 +6,12 @@ import { useSelector } from 'react-redux';
 import Nav from './Nav';
 import getSuggestedUsers from '../hooks/getSuggestedUsers.jsx';
 import Post from './Post';
+import { BiMessageAltDetail } from "react-icons/bi";
+import { useNavigate } from 'react-router-dom';
 
 const Feed = () => {
+
+    const navigate = useNavigate();
 
     const { postData } = useSelector((state) => state.post);
     const { userData } = useSelector((state) => state.user);
@@ -21,8 +25,9 @@ const Feed = () => {
             <div className='w-full h-[100px] flex items-center justify-between p-[20px]
             lg:hidden'>
                 <img src={logo} alt=''  className='w-[80px]'/>
-                <div>
+                <div className='flex items-center gap-[10px]'>
                     <FaRegHeart className='text-white w-[25px] h-[25px]' />
+                    <BiMessageAltDetail className='text-white w-[25px] h-[25px]' onClick={() => navigate('/messages')} />
                 </div>
             </div>
 

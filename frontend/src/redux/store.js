@@ -3,6 +3,8 @@ import userSlice from './userSlice.js';
 import postSlice from './postSlice.js';
 import loopSlice from './loopSlice.js';
 import storySlice from './storySlice.js';
+import messageSlice from './messageSlice.js';
+import socketSlice from './socketSlice.js';
 
 const store = configureStore({
 
@@ -10,7 +12,9 @@ const store = configureStore({
         user: userSlice,
         post: postSlice,
         loop: loopSlice,
-        story: storySlice
+        story: storySlice,
+        message: messageSlice, 
+        socket: socketSlice, 
     }
 
 });

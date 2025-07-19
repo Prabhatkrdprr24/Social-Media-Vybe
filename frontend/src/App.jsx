@@ -17,7 +17,15 @@ import Loops from './pages/Loops.jsx'
 import getAllLoops from './hooks/getAllLoops.jsx'
 import Story from './pages/Story.jsx'
 import getAllStories from './hooks/getAllStories.jsx'
-
+import Messages from './pages/Messages.jsx'
+import MessagesArea from './pages/MessageArea.jsx'
+import { io } from 'socket.io-client'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { setSocket } from './redux/socketSlice.js'
+import getFollowingList from './hooks/getFollowingList.jsx'
+import { setOnlineUsers } from './redux/socketSlice.js'
+import getPrevChatUsers from './hooks/getPrevChatUsers.jsx'
 export const serverUrl = "http://localhost:8000";
 
 const App = () => {
@@ -27,8 +35,37 @@ const App = () => {
   getAllPost();
   getAllLoops();
   getAllStories();
+  getFollowingList();
+  getPrevChatUsers();
 
   const { userData} = useSelector((state) => state.user);
+  const { socket } = useSelector((state) => state.socket);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (userData) {
+      const socketIo = io(serverUrl, {
+        query:{
+          userId: userData._id,
+        }
+      });
+      dispatch(setSocket(socketIo));
+
+      socketIo.on('getOnlineUsers', (users) => {
+        dispatch(setOnlineUsers(users));
+        // console.log("Online Users: ", users);
+      });
+
+      return () => socketIo.close();
+    }
+    else{
+      if(socket){
+        socket.close();
+        dispatch(setSocket(null));
+      }
+    }
+  }, [userData]);
 
   return (
 
@@ -42,6 +79,8 @@ const App = () => {
       <Route path="/upload" element={ userData ? <Upload /> : <Navigate to={"/signin"} />} /> 
       <Route path='/loops' element={ userData ? <Loops /> : <Navigate to={"/signin"} />} />
       <Route path='/story/:userName' element={ userData ? <Story /> : <Navigate to={"/signin"} />} />
+      <Route path='/messages' element={ userData ? <Messages /> : <Navigate to={"/signin"} />} />
+      <Route path='/messageArea' element={ userData ? <MessagesArea /> : <Navigate to={"/signin"} />} />
     </Routes>
 
   )

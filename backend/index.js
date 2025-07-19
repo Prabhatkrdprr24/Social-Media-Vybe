@@ -9,10 +9,10 @@ import postRouter from './routes/post.routes.js';
 import loopRouter from './routes/loop.routes.js';
 import storyRouter from './routes/story.routes.js';
 import messageRouter from './routes/message.routes.js';
+import { app, io, server } from './socket.js';
 
 dotenv.config();
 
-const app = express();
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     connectDb(); 
     console.log(`Server is running on http://localhost:${PORT}`);
 });

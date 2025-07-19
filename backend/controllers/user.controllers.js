@@ -6,7 +6,7 @@ export const getCurrentUser = async (req, res) => {
     try{
 
         const userId = req.userId;
-        const user = await User.findById(userId).populate("posts loops").populate("posts loops posts.author posts.comments saved saved.author story");
+        const user = await User.findById(userId).populate("posts loops").populate("posts loops posts.author posts.comments saved saved.author story following");
         if(!user){
             return res.status(404).json({ message: "User not found" });
         }
@@ -150,3 +150,15 @@ export const follow = async (req, res) => {
 
 }
 
+
+export const followingList = async (req, res) => {
+
+    try{
+        const result = await User.findById(req.userId);
+        return res.status(200).json(result?.following);
+    }
+    catch(error){
+        return res.status(500).json({ message: `backend followingList error ${error}` });
+    }
+
+}
