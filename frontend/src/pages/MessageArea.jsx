@@ -19,6 +19,8 @@ import { useEffect } from "react";
 const MessageArea = () => {
   const { selectedUser, messages } = useSelector((state) => state.message);
   const { userData } = useSelector((state) => state.user);
+  const { socket } = useSelector((state) => state.socket);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -71,6 +73,15 @@ const MessageArea = () => {
   useEffect(() => {
     getAllMessages();
   }, []);
+
+  useEffect(() => {
+    socket?.on("newMessage", (mess) => {
+      dispatch(setMessages([...messages, mess]));
+    });
+    return () => {
+      socket?.off("newMessage");
+    }
+  }, [messages, setMessages]);
 
   return (
     <div className="w-full h-[100vh] bg-black relative">

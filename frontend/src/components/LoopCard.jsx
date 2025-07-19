@@ -16,6 +16,7 @@ import axios from "axios";
 import { serverUrl } from "../App.jsx";
 import { IoSendSharp } from "react-icons/io5";
 
+
 const LoopCard = ({ loop }) => {
   const videoRef = useRef();
   const commentRef = useRef();
@@ -32,6 +33,7 @@ const LoopCard = ({ loop }) => {
 
   const { userData } = useSelector((state) => state.user);
   const { loopData } = useSelector((state) => state.loop);
+  const { socket } = useSelector((state) => state.socket);
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
@@ -80,33 +82,34 @@ const LoopCard = ({ loop }) => {
   };
 
   const handleComment = async () => {
-
-    try{
-
-      const result = await axios.post(`${serverUrl}/api/loop/comment/${loop._id}`, {message}, {withCredentials: true}); 
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/loop/comment/${loop._id}`,
+        { message },
+        { withCredentials: true }
+      );
       const updatedLoop = result.data;
-
-      const updatedLoops = loopData.map((p) => p._id == loop._id ? updatedLoop : p);
+      console.log("Comment response frontend", updatedLoop);
+      const updatedLoops = loopData.map((p) =>
+        p._id == loop._id ? updatedLoop : p
+      );
       dispatch(setLoopData(updatedLoops));
       setMessage("");
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error in handleComment frontend", error);
     }
-
-  }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if(commentRef.current && !commentRef.current.contains(event.target)) {
+      if (commentRef.current && !commentRef.current.contains(event.target)) {
         setShowComment(false);
       }
-    }
+    };
 
-    if(showComment) {
+    if (showComment) {
       document.addEventListener("mousedown", handleClickOutside);
-    }
-    else{
+    } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showComment]);
@@ -137,6 +140,29 @@ const LoopCard = ({ loop }) => {
     };
   }, []);
 
+  useEffect(() => {
+    socket.on("likedLoop", (updatedData) => {
+      const updatedLoops = loopData.map((p) =>
+        p._id == updatedData.loopId ? { ...p, likes: updatedData.likes } : p
+      );
+      dispatch(setLoopData(updatedLoops));
+    });
+
+    socket.on("commentLoop", (updatedData) => {
+      const updatedLoops = loopData.map((p) =>
+        p._id == updatedData.loopId
+          ? { ...p, comments: updatedData.comments }
+          : p
+      );
+      dispatch(setLoopData(updatedLoops));
+    });
+
+    return () => {
+      socket.off("likedLoop");
+      socket.off("commentLoop");
+    };
+  }, [loopData, dispatch, socket]);
+
   return (
     <div className="w-full lg:w-[480px] h-[100vh] flex items-center justify-center border-l-2 border-r-2 border-gray-800  relative overflow-hidden">
       {showHeart && (
@@ -163,7 +189,10 @@ const LoopCard = ({ loop }) => {
           )}
 
           {loop.comments?.map((com, index) => (
-            <div className="w-full  flex flex-col gap-[5px] border-b-[1px] border-gray-800 justify-center pb-[10px] mt-[10px]" key={index}>
+            <div
+              className="w-full  flex flex-col gap-[5px] border-b-[1px] border-gray-800 justify-center pb-[10px] mt-[10px]"
+              key={index}
+            >
               <div className="flex justify-start items-center md:gap-[20px] gap-[10px]">
                 <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden">
                   <img
@@ -275,7 +304,10 @@ const LoopCard = ({ loop }) => {
             <div>{loop.likes.length}</div>
           </div>
 
-          <div className="flex flex-col items-center cursor-pointer" onClick={() => setShowComment(!showComment)}>
+          <div
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => setShowComment(!showComment)}
+          >
             <div>
               <MdOutlineComment className="w-[25px] cursor-pointer h-[25px]" />
             </div>

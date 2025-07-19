@@ -6,7 +6,11 @@ const ReceiverMessage = ({ message }) => {
 
   const { userData } = useSelector((state) => state.user);
   const { selectedUser } = useSelector((state) => state.message);
+  
   const scroll = useRef();
+    useEffect(() => {
+      scroll.current?.scrollIntoView({ behavior: "smooth" });
+    }, [message.message, message.image]);
 
   return (
     <div

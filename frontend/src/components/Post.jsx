@@ -18,6 +18,7 @@ import { serverUrl } from "../App.jsx";
 import { setPostData } from "../redux/postSlice";
 import { setUserData } from "../redux/userSlice";
 import FollowButton from "./FollowButton.jsx";
+import { useEffect } from "react";
 
 
 const Post = ({ post }) => {
@@ -26,6 +27,7 @@ const Post = ({ post }) => {
 
   const { userData } = useSelector((state) => state.user);
   const { postData } = useSelector((state) => state.post);
+  const { socket } = useSelector((state) => state.socket);
 
   const [showComment, setShowComment] = useState(false);
   const [message, setMessage] = useState("");
@@ -80,6 +82,23 @@ const Post = ({ post }) => {
     }
 
   };
+
+  useEffect(() => {
+    socket.on("likedPost", (updatedData) => {
+      const updatedPosts = postData.map((p) => p._id == updatedData.postId ? { ...p, likes: updatedData.likes } : p);
+      dispatch(setPostData(updatedPosts));
+    });
+
+    socket.on("commentPost", (updatedData) => {
+      const updatedPosts = postData.map((p) => p._id == updatedData.postId ? { ...p, comments: updatedData.comments } : p);
+      dispatch(setPostData(updatedPosts));
+    });
+
+    return () => {
+      socket.off("likedPost");
+      socket.off("CommentPost");
+    }
+  }, [postData, dispatch, socket]);
 
   return (
     <div className="w-[90%]   flex flex-col gap-[10px] bg-white items-center shadow-2xl shadow-[#00000058] rounded-2xl pb-[20px]">
