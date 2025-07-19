@@ -26,6 +26,7 @@ import { setSocket } from './redux/socketSlice.js'
 import getFollowingList from './hooks/getFollowingList.jsx'
 import { setOnlineUsers } from './redux/socketSlice.js'
 import getPrevChatUsers from './hooks/getPrevChatUsers.jsx'
+import Search from './pages/Search.jsx'
 export const serverUrl = "http://localhost:8000";
 
 const App = () => {
@@ -81,6 +82,7 @@ const App = () => {
       <Route path='/story/:userName' element={ userData ? <Story /> : <Navigate to={"/signin"} />} />
       <Route path='/messages' element={ userData ? <Messages /> : <Navigate to={"/signin"} />} />
       <Route path='/messageArea' element={ userData ? <MessagesArea /> : <Navigate to={"/signin"} />} />
+      <Route path='/search' element={ userData ? <Search /> : <Navigate to={"/signin"} />} />
     </Routes>
 
   )
