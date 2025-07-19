@@ -27,6 +27,11 @@ import getFollowingList from './hooks/getFollowingList.jsx'
 import { setOnlineUsers } from './redux/socketSlice.js'
 import getPrevChatUsers from './hooks/getPrevChatUsers.jsx'
 import Search from './pages/Search.jsx'
+import getAllNotifications from './hooks/getAllNotifications.jsx'
+import Notifications from './pages/Notifications.jsx'
+import { setSelectedUser } from './redux/messageSlice.js'
+import { setNotificationData } from './redux/userSlice.js'
+
 export const serverUrl = "http://localhost:8000";
 
 const App = () => {
@@ -38,9 +43,11 @@ const App = () => {
   getAllStories();
   getFollowingList();
   getPrevChatUsers();
+  getAllNotifications();
 
   const { userData} = useSelector((state) => state.user);
   const { socket } = useSelector((state) => state.socket);
+  const { notificationData } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -68,6 +75,10 @@ const App = () => {
     }
   }, [userData]);
 
+  socket?.on('newNotification', (noti) => {
+    dispatch(setNotificationData([...notificationData, noti]));
+  })
+
   return (
 
     <Routes>
@@ -83,6 +94,7 @@ const App = () => {
       <Route path='/messages' element={ userData ? <Messages /> : <Navigate to={"/signin"} />} />
       <Route path='/messageArea' element={ userData ? <MessagesArea /> : <Navigate to={"/signin"} />} />
       <Route path='/search' element={ userData ? <Search /> : <Navigate to={"/signin"} />} />
+      <Route path='/notifications' element={ userData ? <Notifications /> : <Navigate to={"/signin"} />} />
     </Routes>
 
   )

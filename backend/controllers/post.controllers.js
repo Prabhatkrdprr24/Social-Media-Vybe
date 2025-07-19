@@ -2,6 +2,8 @@ import Post from "../models/post.model.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import User from "../models/user.model.js";
 import { io } from "../socket.js";
+import Notification from "../models/notification.model.js";
+import { getSocketId } from "../socket.js";
 
 export const uploadPost = async (req, res) => {
 
@@ -72,6 +74,23 @@ export const like = async (req, res) => {
         }
         else{
             post.likes.push(req.userId);
+            if(post.author._id != req.userId){
+                const notification = await Notification.create({
+                    sender: req.userId,
+                    receiver: post.author,
+                    type: "like",
+                    post: post._id,
+                    message: `liked your post`
+                });
+                const populatedNotification = await Notification.findById(notification._id)
+                    .populate("sender receiver post");
+
+                const receiverSocketId = getSocketId(post.author);
+                if(receiverSocketId){
+                    io.to(receiverSocketId).emit("newNotification", populatedNotification);
+                }
+            }
+            
         }
 
         await post.save();
@@ -106,6 +125,23 @@ export const comment = async (req, res) => {
             author: req.userId,
             message: message,
         });
+
+        if(post.author._id != req.userId){
+            const notification = await Notification.create({
+                sender: req.userId,
+                receiver: post.author,
+                type: "comment",
+                post: post._id,
+                message: `commented on your post`
+            });
+            const populatedNotification = await Notification.findById(notification._id)
+                .populate("sender receiver post");
+
+            const receiverSocketId = getSocketId(post.author);
+            if(receiverSocketId){
+                io.to(receiverSocketId).emit("newNotification", populatedNotification);
+            }
+        }
 
         await post.save();
 
