@@ -133,7 +133,7 @@ export const follow = async (req, res) => {
           sender: req.userId,
           receiver: targetUserId,
           type: "follow",
-          post: loop._id,
+          // post: loop._id,
           message: `started following you`,
         });
         const populatedNotification = await Notification.findById(
